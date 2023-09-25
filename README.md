@@ -19,10 +19,10 @@ optional arguments:
 
 ### Usage
 
-Using distroless image available:
+Using distroless image available (`ghcr.io/violetcranberry/helmyamlizer:latest`):
 
 ```shell
-docker pull ghcr.io/violetcranberry/helmyamlizer
+docker pull ghcr.io/violetcranberry/helmyamlizer:latest
 helm search repo prometheus-community && helm repo update && mkdir prom-stack
 
 helm template prometheus-community/kube-prometheus-stack | docker run -iv $(pwd)/prom-stack:/prom-stack \
