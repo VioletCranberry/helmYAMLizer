@@ -34,7 +34,7 @@ Using pure `bash`:
 
 ```shell
 # helm repo add gloo https://storage.googleapis.com/solo-public-helm && helm repo update
-pip install -r requirements.txt
+pip3 install ruamel.yaml
 helm template --include-crds gloo/gloo | \
   python3 <(curl -sL https://raw.githubusercontent.com/VioletCranberry/helmYAMLizer/main/helmYAMLizer.py) \
   --dir 'gloo'
