@@ -1,0 +1,14 @@
+---
+# Source: kube-prometheus-stack/charts/grafana/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: release-name-grafana
+  namespace: default
+  labels:
+    helm.sh/chart: grafana-6.59.5
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "10.1.2"
+    app.kubernetes.io/managed-by: Helm
+rules: []

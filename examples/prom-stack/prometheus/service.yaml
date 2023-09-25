@@ -1,0 +1,31 @@
+---
+# Source: kube-prometheus-stack/templates/prometheus/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kube-promethe-prometheus
+  namespace: default
+  labels:
+    app: kube-prometheus-stack-prometheus
+    self-monitor: "true"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "51.2.0"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-51.2.0
+    release: "release-name"
+    heritage: "Helm"
+spec:
+  ports:
+  - name: http-web
+    port: 9090
+    targetPort: 9090
+  - name: reloader-web
+    appProtocol: http
+    port: 8080
+    targetPort: reloader-web
+  publishNotReadyAddresses: false
+  selector:
+    app.kubernetes.io/name: prometheus
+    operator.prometheus.io/name: release-name-kube-promethe-prometheus
+  type: "ClusterIP"

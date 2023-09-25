@@ -1,0 +1,49 @@
+---
+# Source: gloo/templates/5-resource-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gloo-custom-resource-config
+  namespace: default
+  labels:
+    app: gloo
+    gloo: custom-resources
+data:
+  custom-resources: |2
+
+    ---
+
+    apiVersion: gateway.solo.io/v1
+    kind: Gateway
+    metadata:
+      name: gateway-proxy
+      namespace: default
+      labels:
+        app: gloo
+    spec:
+      bindAddress: "::"
+      bindPort: 8080
+      httpGateway: {}
+      useProxyProto: false
+      ssl: false
+      proxyNames:
+      - gateway-proxy
+    ---
+
+    apiVersion: gateway.solo.io/v1
+    kind: Gateway
+    metadata:
+      name: gateway-proxy-ssl
+      namespace: default
+      labels:
+        app: gloo
+    spec:
+      bindAddress: "::"
+      bindPort: 8443
+      httpGateway: {}
+      useProxyProto: false
+      ssl: true
+      proxyNames:
+      - gateway-proxy
+
+  has-custom-resources: "true"

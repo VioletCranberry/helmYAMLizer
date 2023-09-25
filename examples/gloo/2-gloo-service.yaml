@@ -1,0 +1,34 @@
+---
+# Source: gloo/templates/2-gloo-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gloo
+    gloo: gloo
+  name: gloo
+  namespace: default
+spec:
+  ports:
+  - name: grpc-xds
+    port: 9977
+    protocol: TCP
+  - name: rest-xds
+    port: 9976
+    protocol: TCP
+  - name: grpc-validation
+    port: 9988
+    protocol: TCP
+  - name: grpc-proxydebug
+    port: 9966
+    protocol: TCP
+  - name: wasm-cache
+    port: 9979
+    protocol: TCP
+  - name: https
+    port: 443
+    protocol: TCP
+    # this should map to projects/gateway/pkg/defaults.ValidationWebhookBindPort
+    targetPort: 8443
+  selector:
+    gloo: gloo

@@ -1,0 +1,75 @@
+---
+# Source: kube-prometheus-stack/templates/prometheus/prometheus.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: release-name-kube-promethe-prometheus
+  namespace: default
+  labels:
+    app: kube-prometheus-stack-prometheus
+
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "51.2.0"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-51.2.0
+    release: "release-name"
+    heritage: "Helm"
+spec:
+  alerting:
+    alertmanagers:
+    - namespace: default
+      name: release-name-kube-promethe-alertmanager
+      port: http-web
+      pathPrefix: "/"
+      apiVersion: v2
+  image: "quay.io/prometheus/prometheus:v2.47.0"
+  version: v2.47.0
+  externalUrl: http://release-name-kube-promethe-prometheus.default:9090
+  paused: false
+  replicas: 1
+  shards: 1
+  logLevel: info
+  logFormat: logfmt
+  listenLocal: false
+  enableAdminAPI: false
+  retention: "10d"
+  tsdb:
+    outOfOrderTimeWindow: 0s
+  walCompression: true
+  routePrefix: "/"
+  serviceAccountName: release-name-kube-promethe-prometheus
+  serviceMonitorSelector:
+    matchLabels:
+      release: "release-name"
+
+  serviceMonitorNamespaceSelector: {}
+  podMonitorSelector:
+    matchLabels:
+      release: "release-name"
+
+  podMonitorNamespaceSelector: {}
+  probeSelector:
+    matchLabels:
+      release: "release-name"
+
+  probeNamespaceSelector: {}
+  securityContext:
+    fsGroup: 2000
+    runAsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  ruleNamespaceSelector: {}
+  ruleSelector:
+    matchLabels:
+      release: "release-name"
+
+  scrapeConfigSelector:
+    matchLabels:
+      release: "release-name"
+
+  scrapeConfigNamespaceSelector: {}
+  portName: http-web
+  hostNetwork: false

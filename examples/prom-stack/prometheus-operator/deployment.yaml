@@ -1,0 +1,83 @@
+---
+# Source: kube-prometheus-stack/templates/prometheus-operator/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: release-name-kube-promethe-operator
+  namespace: default
+  labels:
+    app: kube-prometheus-stack-operator
+
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "51.2.0"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-51.2.0
+    release: "release-name"
+    heritage: "Helm"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: kube-prometheus-stack-operator
+      release: "release-name"
+  template:
+    metadata:
+      labels:
+        app: kube-prometheus-stack-operator
+
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "51.2.0"
+        app.kubernetes.io/part-of: kube-prometheus-stack
+        chart: kube-prometheus-stack-51.2.0
+        release: "release-name"
+        heritage: "Helm"
+    spec:
+      containers:
+      - name: kube-prometheus-stack
+        image: "quay.io/prometheus-operator/prometheus-operator:v0.68.0"
+        imagePullPolicy: "IfNotPresent"
+        args:
+        - --kubelet-service=kube-system/release-name-kube-promethe-kubelet
+        - --localhost=127.0.0.1
+        - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.68.0
+        - --config-reloader-cpu-request=0
+        - --config-reloader-cpu-limit=0
+        - --config-reloader-memory-request=0
+        - --config-reloader-memory-limit=0
+        - --thanos-default-base-image=quay.io/thanos/thanos:v0.32.2
+        - --secret-field-selector=type!=kubernetes.io/dockercfg,type!=kubernetes.io/service-account-token,type!=helm.sh/release.v1
+        - --web.enable-tls=true
+        - --web.cert-file=/cert/cert
+        - --web.key-file=/cert/key
+        - --web.listen-address=:10250
+        - --web.tls-min-version=VersionTLS13
+        ports:
+        - containerPort: 10250
+          name: https
+        resources: {}
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: tls-secret
+          mountPath: /cert
+          readOnly: true
+      volumes:
+      - name: tls-secret
+        secret:
+          defaultMode: 420
+          secretName: release-name-kube-promethe-admission
+      securityContext:
+        fsGroup: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: release-name-kube-promethe-operator

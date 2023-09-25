@@ -1,0 +1,49 @@
+---
+# Source: gloo/templates/5-resource-migration-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: gloo
+    gloo: resource-migration
+  name: gloo-resource-migration
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-upgrade
+    "helm.sh/hook-weight": "3" # run this job after the role/rolebinding is created, and before the validation webhook is upgraded
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        gloo: resource-migration
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: gloo-resource-migration
+      restartPolicy: OnFailure
+      containers:
+      - name: kubectl
+        image: quay.io/solo-io/kubectl:1.15.6
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10101
+        command:
+        - /bin/sh
+        - -c
+        - |
+          if ! kubectl get crd upstreams.gloo.solo.io; then
+            echo "Could not find Upstream CRD. Gloo Edge may not be installed yet. Skipping migration job."
+            exit 0
+          fi
+
+          # remove existing helm labels/annotations since the custom resources are no longer managed by helm.
+          # also add resource-policy to tell helm not to delete the resource during upgrade.
+          # select by label app=gloo, which is on all CRs from the gloo helm chart.
+          kubectl annotate --overwrite upstreams.gloo.solo.io -n default -l app=gloo helm.sh/hook- helm.sh/hook-weight- meta.helm.sh/release-name- meta.helm.sh/release-namespace- helm.sh/resource-policy=keep || exit $?
+          kubectl label upstreams.gloo.solo.io -n default -l app=gloo,app.kubernetes.io/managed-by=Helm app.kubernetes.io/managed-by- || exit $?
+
+          # gateways can be in multiple namespaces
+          kubectl annotate --overwrite gateways.gateway.solo.io -n default -l app=gloo helm.sh/hook- helm.sh/hook-weight- meta.helm.sh/release-name- meta.helm.sh/release-namespace- helm.sh/resource-policy=keep || exit $?
+          kubectl label gateways.gateway.solo.io -n default -l app=gloo,app.kubernetes.io/managed-by=Helm app.kubernetes.io/managed-by- || exit $?

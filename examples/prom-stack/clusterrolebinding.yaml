@@ -1,0 +1,23 @@
+---
+# Source: kube-prometheus-stack/charts/kube-state-metrics/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    helm.sh/chart: kube-state-metrics-5.12.1
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/part-of: kube-state-metrics
+    app.kubernetes.io/name: kube-state-metrics
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "2.10.0"
+    release: release-name
+  name: release-name-kube-state-metrics
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: release-name-kube-state-metrics
+subjects:
+- kind: ServiceAccount
+  name: release-name-kube-state-metrics
+  namespace: default

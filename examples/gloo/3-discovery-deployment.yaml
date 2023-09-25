@@ -1,0 +1,48 @@
+---
+# Source: gloo/templates/3-discovery-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gloo
+    gloo: discovery
+  name: discovery
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      gloo: discovery
+  template:
+    metadata:
+      labels:
+        gloo: discovery
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9091"
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccountName: discovery
+      containers:
+      - image: quay.io/solo-io/discovery:1.15.6
+        imagePullPolicy: IfNotPresent
+        name: discovery
+        # container security context
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 10101
+          capabilities:
+            drop:
+            - ALL
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: START_STATS_SERVER
+          value: "true"
+      # Pod security context
+      securityContext:
+        fsGroup: 10101

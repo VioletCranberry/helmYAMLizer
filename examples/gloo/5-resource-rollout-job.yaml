@@ -1,0 +1,65 @@
+---
+# Source: gloo/templates/5-resource-rollout-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: gloo
+    gloo: resource-rollout
+  name: gloo-resource-rollout
+  namespace: default
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "5" # run this job after the role/rolebinding is created
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        gloo: resource-rollout
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: gloo-resource-rollout
+      restartPolicy: OnFailure
+      volumes:
+      - name: custom-resource-config-volume
+        configMap:
+          name: gloo-custom-resource-config
+          items:
+          - key: custom-resources
+            path: custom-resources
+      containers:
+      - name: kubectl
+        image: quay.io/solo-io/kubectl:1.15.6
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: HAS_CUSTOM_RESOURCES
+          valueFrom:
+            configMapKeyRef:
+              name: gloo-custom-resource-config
+              key: has-custom-resources
+        volumeMounts:
+        - name: custom-resource-config-volume
+          mountPath: /etc/gloo-custom-resources
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10101
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # if validation webhook is enabled, wait for deployment rollout so validation service will be available
+          kubectl rollout status deployment -n default gloo
+
+          # apply Gloo Edge custom resources
+          if [ $HAS_CUSTOM_RESOURCES == "true" ]
+          then
+            kubectl apply -f /etc/gloo-custom-resources/custom-resources || exit $?
+          else
+            echo "no custom resources to apply"
+          fi
+
+          # remove the resource-policy annotations that were added temporarily by the gloo-resource-migration job during upgrade
+          kubectl annotate upstreams.gloo.solo.io -n default -l app=gloo helm.sh/resource-policy- || exit $?
+          kubectl annotate gateways.gateway.solo.io -n default -l app=gloo helm.sh/resource-policy- || exit $?

@@ -1,0 +1,26 @@
+---
+# Source: kube-prometheus-stack/templates/prometheus-operator/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: release-name-kube-promethe-operator
+  namespace: default
+  labels:
+    app: kube-prometheus-stack-operator
+
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "51.2.0"
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    chart: kube-prometheus-stack-51.2.0
+    release: "release-name"
+    heritage: "Helm"
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: https
+  selector:
+    app: kube-prometheus-stack-operator
+    release: "release-name"
+  type: "ClusterIP"

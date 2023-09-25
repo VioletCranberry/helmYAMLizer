@@ -1,0 +1,40 @@
+---
+# Source: gloo/templates/6.5-gateway-certgen-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: gloo
+    gloo: gateway-certgen
+  name: gateway-certgen
+  namespace: default
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        gloo: gateway-certgen
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: certgen
+      restartPolicy: OnFailure
+      containers:
+      - image: quay.io/solo-io/certgen:1.15.6
+        imagePullPolicy: IfNotPresent
+        name: certgen
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10101
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        args:
+        - "--secret-name=gateway-validation-certs"
+        - "--svc-name=gloo"
+        - "--validating-webhook-configuration-name=gloo-gateway-validation-webhook-default"

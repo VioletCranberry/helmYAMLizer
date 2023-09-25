@@ -1,0 +1,17 @@
+---
+# Source: gloo/templates/23-namespace-clusterrolebinding-gateway.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gloo-graphqlapi-mutator-binding-default
+  labels:
+    app: gloo
+    gloo: rbac
+subjects:
+- kind: ServiceAccount
+  name: discovery
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: gloo-graphqlapi-mutator-default
+  apiGroup: rbac.authorization.k8s.io

@@ -17,7 +17,7 @@ optional arguments:
   --debug            Should we run the script in debug mode?
 ```
 
-### Examples
+### Usage
 
 Using distroless image available:
 
@@ -28,6 +28,11 @@ helm search repo prometheus-community && helm repo update && mkdir prom-stack
 helm template prometheus-community/kube-prometheus-stack | docker run -iv $(pwd)/prom-stack:/prom-stack \
   ghcr.io/violetcranberry/helmyamlizer:latest --dir 'prom-stack'
 ```
+
+### Preview
+
+![Demo](./examples/demo.gif)
+For additional examples, refer to the `examples` directory.
 
 ### The problem
 

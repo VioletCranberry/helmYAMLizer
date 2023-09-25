@@ -1,0 +1,22 @@
+---
+# Source: gloo/templates/20-namespace-clusterrole-gateway.yaml
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: gloo-graphqlapi-mutator-default
+  labels:
+    app: gloo
+    gloo: rbac
+rules:
+- apiGroups:
+  - graphql.gloo.solo.io
+  resources:
+  - graphqlapis
+  - graphqlapis/status
+  verbs:
+  - get
+  - list
+  - watch
+  - update
+  - patch
+  - create

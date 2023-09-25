@@ -1,0 +1,76 @@
+---
+# Source: gloo/templates/7-gateway-proxy-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: gloo
+    gloo: gateway-proxy
+    gateway-proxy-id: gateway-proxy
+  name: gateway-proxy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      gloo: gateway-proxy
+      gateway-proxy-id: gateway-proxy
+  template:
+    metadata:
+      labels:
+        gloo: gateway-proxy
+        gateway-proxy-id: gateway-proxy
+        gateway-proxy: live
+
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8081"
+        prometheus.io/scrape: "true"
+    spec:
+
+      securityContext:
+        fsGroup: 10101
+        runAsUser: 10101
+
+
+      serviceAccountName: gateway-proxy
+      containers:
+      - args:
+        - --disable-hot-restart
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: DISABLE_CORE_DUMPS
+          value: "false"
+        image: quay.io/solo-io/gloo-envoy-wrapper:1.15.6
+        imagePullPolicy: IfNotPresent
+        name: gateway-proxy
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 10101
+
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          name: https
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /etc/envoy
+          name: envoy-config
+      volumes:
+      - configMap:
+          name: gateway-proxy-envoy-config
+        name: envoy-config

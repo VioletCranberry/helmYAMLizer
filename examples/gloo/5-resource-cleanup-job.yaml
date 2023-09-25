@@ -1,0 +1,46 @@
+---
+# Source: gloo/templates/5-resource-cleanup-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    app: gloo
+    gloo: resource-cleanup
+  name: gloo-resource-cleanup
+  namespace: default
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-weight": "5" # run this job after the role/rolebinding is created
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      labels:
+        gloo: resource-cleanup
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: gloo-resource-cleanup
+      restartPolicy: OnFailure
+      containers:
+      - name: kubectl
+        image: quay.io/solo-io/kubectl:1.15.6
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 10101
+        command:
+        - /bin/sh
+        - -c
+        - |
+          kubectl delete --ignore-not-found validatingwebhookconfigurations.admissionregistration.k8s.io gloo-gateway-validation-webhook-default || exit $?
+
+          if ! kubectl get crd upstreams.gloo.solo.io; then
+            echo "Could not find Upstream CRD. Gloo Edge CRDs may have already been deleted. Skipping cleanup of Gloo Edge resources."
+            exit 0
+          fi
+
+          kubectl delete --ignore-not-found upstreams.gloo.solo.io -n default -l app=gloo || exit $?
+
+          # gateways can be in multiple namespaces
+          kubectl delete --ignore-not-found gateways.gateway.solo.io -n default -l app=gloo || exit $?
