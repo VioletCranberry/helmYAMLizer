@@ -48,7 +48,7 @@ jobs:
       - name: Generate badge
         run: |
           anybadge --value ${{ env.REPO_USER }}/${{ env.REPO_NAME }}:${{ env.LATEST_RELEASE_TAG }} \
-          --file=./.github/badges/image.svg --label 'ghcr.io image' --color fuchsia
+          --file=./.github/badges/image.svg --label 'ghcr.io image' --color fuchsia --overwrite
       - name: Commit badge to repo
         run: |
           git config user.name "GitHub Actions Bot"
