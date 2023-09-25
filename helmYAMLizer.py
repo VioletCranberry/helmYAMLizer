@@ -22,7 +22,8 @@ yaml.explicit_start = True
 
 
 def handle_exceptions(func: Callable) -> Callable:
-    """ Decorator to catch exceptions occurring within the decorated function. """
+    """Decorator to catch exceptions occurring within the decorated function."""
+
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         # Attempt to execute the provided function.
@@ -33,16 +34,16 @@ def handle_exceptions(func: Callable) -> Callable:
         except Exception as err:
             # Get the name of the function where the exception occurred.
             func_name = func.__name__
-            logging.fatal("An exception occurred "
-                          "in function %s: %s", func_name, err)
+            logging.fatal("An exception occurred " "in function %s: %s", func_name, err)
             # Exit the program with an error status.
             sys.exit(1)
+
     return wrapper
 
 
 @handle_exceptions
 def get_first_line_comment(document: dict) -> Optional[str]:
-    """ Return the comment from the first line of the YAML document if it exists. """
+    """Return the comment from the first line of the YAML document if it exists."""
     # Check if the document is a dictionary or is not None (empty YAML)
     if document is None or not isinstance(document, dict):
         return None
@@ -63,7 +64,7 @@ def get_first_line_comment(document: dict) -> Optional[str]:
 
 @handle_exceptions
 def get_template_source_path(comment: str) -> Optional[str]:
-    """ Get the document template path from a given comment string. """
+    """Get the document template path from a given comment string."""
     path_pattern = "# Source:"
     # Validate if comment is a string
     if not isinstance(comment, str):
@@ -71,15 +72,19 @@ def get_template_source_path(comment: str) -> Optional[str]:
     # Check if comment starts with the desired pattern
     if comment.startswith(path_pattern):
         try:
-            template_path = comment.split(': ', 1)[1].strip()
+            template_path = comment.split(": ", 1)[1].strip()
             # Handle the case when the path is empty after stripping
             if not template_path:
-                raise ValueError(f"Comment '{comment}' is missing a template path"
-                                 f" after '{path_pattern}'.")
+                raise ValueError(
+                    f"Comment '{comment}' is missing a template path"
+                    f" after '{path_pattern}'."
+                )
         # Handle the case when the split operation doesn't produce the expected list size
         except IndexError as err:
-            raise ValueError(f"Comment '{comment}' is malformed "
-                             f"and cannot be split appropriately.") from err
+            raise ValueError(
+                f"Comment '{comment}' is malformed "
+                f"and cannot be split appropriately."
+            ) from err
         logging.debug("Document source path: %s", template_path)
         return template_path
     raise ValueError(f"Comment {comment} does not begin with {path_pattern}")
@@ -87,9 +92,11 @@ def get_template_source_path(comment: str) -> Optional[str]:
 
 @handle_exceptions
 def flatten_source_path(template_path: str) -> str:
-    """ Flatten template path based on certain prefixes or substrings. """
+    """Flatten template path based on certain prefixes or substrings."""
     if not isinstance(template_path, str):
-        raise ValueError(f"Expected a string for template path, but got {type(template_path)}.")
+        raise ValueError(
+            f"Expected a string for template path, but got {type(template_path)}."
+        )
     # Check if template_path starts with "crds/"
     if template_path.startswith("crds/"):
         return template_path
@@ -97,21 +104,27 @@ def flatten_source_path(template_path: str) -> str:
     if "/templates/" in template_path:
         return template_path.split("/templates/")[1]
     # Raise an error if neither of the conditions is met
-    raise ValueError(f"The path '{template_path}' neither "
-                     f"starts with 'crds/' nor contains"
-                     f" '/templates/'.")
+    raise ValueError(
+        f"The path '{template_path}' neither "
+        f"starts with 'crds/' nor contains"
+        f" '/templates/'."
+    )
 
 
 @handle_exceptions
 def save_document_to_file(file_path: str, document: Dict) -> None:
-    """ Save the given data to the specified file path. """
+    """Save the given data to the specified file path."""
     # Validate that the provided document is a dictionary
     logging.debug("Document data to be saved: %s", document)
     if not isinstance(document, Dict):
-        raise ValueError(f"Provided document must be a dictionary, but got {type(document)}.")
+        raise ValueError(
+            f"Provided document must be a dictionary, but got {type(document)}."
+        )
     # Validate that the provided file path is a string
     if not isinstance(file_path, str):
-        raise ValueError(f"Provided file path must be a string, but got {type(file_path)}.")
+        raise ValueError(
+            f"Provided file path must be a string, but got {type(file_path)}."
+        )
     try:
         with open(file=file_path, encoding="utf-8", mode="w") as yaml_file:
             logging.debug("File path: %s", yaml_file.name)
@@ -119,17 +132,20 @@ def save_document_to_file(file_path: str, document: Dict) -> None:
             yaml.dump(document, yaml_file)
     # Catch IO errors that might occur during file operations
     except IOError as io_err:
-        raise RuntimeError(f"Failed to save data to '{file_path}'."
-                           f" IOError: {str(io_err)}") from io_err
+        raise RuntimeError(
+            f"Failed to save data to '{file_path}'." f" IOError: {str(io_err)}"
+        ) from io_err
     # Catch errors that might occur during YAML operations
     except YAMLError as yaml_err:
-        raise RuntimeError(f"Failed to save data to '{file_path}' due to YAML error:"
-                           f" {str(yaml_err)}") from yaml_err
+        raise RuntimeError(
+            f"Failed to save data to '{file_path}' due to YAML error:"
+            f" {str(yaml_err)}"
+        ) from yaml_err
 
 
 @handle_exceptions
 def ensure_dirs_exists(file_path: str) -> None:
-    """ Ensure that the directory of the given path exists. """
+    """Ensure that the directory of the given path exists."""
     # Ensure path is a string
     if not isinstance(file_path, str):
         raise ValueError("Provided path must be a string.")
@@ -143,43 +159,50 @@ def ensure_dirs_exists(file_path: str) -> None:
         if not os.path.exists(folder_path):
             os.makedirs(folder_path, exist_ok=True)
     except OSError as err:
-        raise RuntimeError(f"Failed to create directory '{folder_path}'."
-                           f" Error: {str(err)}") from err
+        raise RuntimeError(
+            f"Failed to create directory '{folder_path}'." f" Error: {str(err)}"
+        ) from err
 
 
 @handle_exceptions
 def prepare_file_path(target_dir: str, flattened_path: str) -> str:
-    """ Prepare and ensure the directory for the file path exists. """
+    """Prepare and ensure the directory for the file path exists."""
     # Combine target directory and flattened path to form the local file path.
     try:
         local_file_path = os.path.join(target_dir, flattened_path)
     except TypeError as err:
-        raise RuntimeError(f"Failed to join file paths."
-                           f" Error: {str(err)}") from err
+        raise RuntimeError(f"Failed to join file paths." f" Error: {str(err)}") from err
     # Ensure that all directories in the path exist.
     ensure_dirs_exists(local_file_path)
     return local_file_path
 
 
 def get_arguments() -> argparse.Namespace:
-    """ Parses and returns command line arguments. """
+    """Parses and returns command line arguments."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", "--dir",
-                        action="store",
-                        help="The directory where files will be saved.",
-                        required=True)
-    parser.add_argument("--debug",
-                        action="store_true",
-                        help="Should we run the script in debug mode?",
-                        required=False)
+    parser.add_argument(
+        "-d",
+        "--dir",
+        action="store",
+        help="The directory where files will be saved.",
+        required=True,
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Should we run the script in debug mode?",
+        required=False,
+    )
     return parser.parse_args()
 
 
 def main() -> None:
-    """ Main function """
+    """Main function"""
     args = get_arguments()
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
-                        format="%(levelname)8s - %(message)s")
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.INFO,
+        format="%(levelname)8s - %(message)s",
+    )
 
     target_dir = args.dir
     user_input = sys.stdin.read()
@@ -200,8 +223,9 @@ def main() -> None:
             # Save the document to file.
             save_document_to_file(file_path, document)
         else:
-            logging.warning("Document [#%s] has no recognizable source."
-                            " Skipping.", index)
+            logging.warning(
+                "Document [#%s] has no recognizable source." " Skipping.", index
+            )
 
 
 if __name__ == "__main__":

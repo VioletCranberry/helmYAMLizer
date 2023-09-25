@@ -1,0 +1,25 @@
+name: Run 'PyLint' command
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - edited
+      - synchronize
+    branches:
+      - master
+      - main
+    paths:
+      - '**.py'
+permissions:
+  contents: read
+jobs:
+  black_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Run black linter
+        uses: psf/black@stable
+        with:
+          options: "--check --verbose"

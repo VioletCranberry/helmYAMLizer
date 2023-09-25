@@ -1,7 +1,7 @@
 #  helmYAMLizer
 
 ![Pylint Score](./.github/badges/pylint.svg) ![Coverage Score](./.github/badges/coverage.svg)
-![Image](./.github/badges/image.svg)
+![Image](./.github/badges/image.svg) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Adopting a minimalistic approach to rendering multi-document YAML produced by the `helm template` output into local
 files. In line with GitOps practices, a shallow or non-nested structure for saved YAML is preferred to ensure better
