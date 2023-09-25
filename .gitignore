@@ -1,0 +1,8 @@
+# Environments
+venv/
+# PyCharm
+.idea/
+# Workflow outputs
+pylint_output.log
+coverage_output.log
+.coverage
