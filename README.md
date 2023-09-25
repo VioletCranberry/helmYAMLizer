@@ -22,14 +22,25 @@ optional arguments:
 Using distroless image available (`ghcr.io/violetcranberry/helmyamlizer:latest`):
 
 ```shell
-docker pull ghcr.io/violetcranberry/helmyamlizer:latest
-helm search repo prometheus-community && helm repo update && mkdir prom-stack
+# helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update
+docker pull ghcr.io/violetcranberry/helmyamlizer:latest && mkdir prom-stack
 
-helm template prometheus-community/kube-prometheus-stack | docker run -iv $(pwd)/prom-stack:/prom-stack \
-  ghcr.io/violetcranberry/helmyamlizer:latest --dir 'prom-stack'
+helm template prometheus-community/kube-prometheus-stack | \
+  docker run -iv $(pwd)/prom-stack:/prom-stack ghcr.io/violetcranberry/helmyamlizer:latest \
+  --dir 'prom-stack'
 ```
 
-### Preview
+Using pure `bash`:
+
+```shell
+# helm repo add gloo https://storage.googleapis.com/solo-public-helm && helm repo update
+pip install -r requirements.txt
+helm template --include-crds gloo/gloo | \
+  python3 <(curl -sL https://raw.githubusercontent.com/VioletCranberry/helmYAMLizer/main/helmYAMLizer.py) \
+  --dir 'gloo'
+```
+
+Running the script directly:
 
 ![Demo](./examples/demo.gif)
 For additional examples, refer to the `examples` directory.

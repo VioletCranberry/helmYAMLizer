@@ -31,7 +31,7 @@ jobs:
         run: |
           mkdir -p ./.github/badges
           SCORE=$(grep 'TOTAL' coverage_output.log | awk '{print substr($NF, 1, length($NF)-1)}')
-          anybadge --value=$SCORE --suffix='%' --file=./.github/badges/coverage.svg --label=Coverage \
+          anybadge --value=$SCORE --suffix='%' --file=./.github/badges/coverage.svg --label=coverage \
           --overwrite --value=$SCORE 50=red 60=orange 80=yellow 90=green
           echo "Coverage Score: $SCORE%"
       - name: Commit badge to repo

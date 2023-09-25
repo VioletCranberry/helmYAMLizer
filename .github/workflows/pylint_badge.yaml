@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p ./.github/badges
           SCORE=$(grep "Your code has been rated at" pylint_output.log | awk '{print $7}' | cut -d/ -f1)
-          anybadge --value=$SCORE --file=./.github/badges/pylint.svg --label=PyLint \
+          anybadge --value=$SCORE --file=./.github/badges/pylint.svg --label='pyLint score' \
           --overwrite --value=$SCORE 2=red 4=orange 8=yellow 9=green
           echo "PyLint Score: $SCORE"
       - name: Commit badge to repo
