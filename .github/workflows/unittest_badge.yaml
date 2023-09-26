@@ -45,4 +45,5 @@ jobs:
             exit 0
           fi
           git commit -m "Update unittest badge [skip ci]"
+          git pull --rebase
           git push
