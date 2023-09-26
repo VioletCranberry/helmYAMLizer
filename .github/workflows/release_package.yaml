@@ -5,8 +5,9 @@ on:
       - published
 permissions:
   contents: write
+  packages: write
 jobs:
-  new_image_build:
+  new_image_release:
     runs-on: ubuntu-latest
     permissions:
       # IMPORTANT: this permission is mandatory for trusted publishing
