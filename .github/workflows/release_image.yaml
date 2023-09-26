@@ -20,8 +20,8 @@ jobs:
           python-version: "3.10"
       - name: Get latest release tag
         run: |
-          repo_user=$(echo ${{ env.GITHUB_REPOSITORY }} | cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')
-          repo_name=$(echo ${{ env.GITHUB_REPOSITORY }} | cut -d'/' -f2 | tr '[:upper:]' '[:lower:]')
+          repo_user=$(echo ${{ github.repository }} | cut -d'/' -f1 | tr '[:upper:]' '[:lower:]')
+          repo_name=$(echo ${{ github.repository }} | cut -d'/' -f2 | tr '[:upper:]' '[:lower:]')
           release_url="https://api.github.com/repos/$repo_user/$repo_name/releases/latest"
           release_tag=$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$release_url" | jq -r ".tag_name")
           echo "LATEST_RELEASE_TAG=$release_tag" >> $GITHUB_ENV
