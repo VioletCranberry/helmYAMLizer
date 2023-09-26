@@ -14,7 +14,7 @@ jobs:
         with:
           ref: main
       - name: Setup release
-        uses: ./.github/workflows/common-release.yaml
+        uses: ./.github/actions/release_base
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
