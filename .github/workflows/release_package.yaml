@@ -3,15 +3,13 @@ on:
   release:
     types:
       - published
-permissions:
-  contents: write
-  packages: write
 jobs:
   new_image_release:
     runs-on: ubuntu-latest
     permissions:
-      # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
+      packages: write
+      contents: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -53,7 +51,7 @@ jobs:
           git push
       - name: Build package
         run: python -m build
-      - name: Upload Release Asset
+      - name: Upload Release Assets
         run: |
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
           ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
