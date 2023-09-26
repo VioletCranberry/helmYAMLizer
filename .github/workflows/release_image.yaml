@@ -10,6 +10,10 @@ jobs:
   new_image_build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          ref: main
       - name: Setup release
         uses: ./.github/workflows/common-setup.yaml@main
       - name: Login to GitHub Container Registry

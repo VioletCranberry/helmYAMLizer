@@ -5,10 +5,6 @@ jobs:
   release-setup:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-        with:
-          ref: main
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
