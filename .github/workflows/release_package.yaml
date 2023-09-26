@@ -4,7 +4,7 @@ on:
     types:
       - published
 jobs:
-  new_image_release:
+  new_package_release:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
