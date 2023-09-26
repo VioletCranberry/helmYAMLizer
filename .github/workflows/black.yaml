@@ -1,4 +1,4 @@
-name: Run 'PyLint' command
+name: Run 'black' linter
 on:
   pull_request:
     types:
