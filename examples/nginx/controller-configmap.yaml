@@ -1,0 +1,17 @@
+---
+# Source: ingress-nginx/templates/controller-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  labels:
+    helm.sh/chart: ingress-nginx-4.8.0
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.9.0"
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: controller
+  name: release-name-ingress-nginx-controller
+  namespace: default
+data:
+  allow-snippet-annotations: "false"

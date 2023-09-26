@@ -1,0 +1,57 @@
+---
+# Source: ingress-nginx/templates/admission-webhooks/job-patch/job-patchWebhook.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: release-name-ingress-nginx-admission-patch
+  namespace: default
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    helm.sh/chart: ingress-nginx-4.8.0
+    app.kubernetes.io/name: ingress-nginx
+    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/version: "1.9.0"
+    app.kubernetes.io/part-of: ingress-nginx
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-webhook
+spec:
+  template:
+    metadata:
+      name: release-name-ingress-nginx-admission-patch
+      labels:
+        helm.sh/chart: ingress-nginx-4.8.0
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/version: "1.9.0"
+        app.kubernetes.io/part-of: ingress-nginx
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: admission-webhook
+    spec:
+      containers:
+      - name: patch
+        image: "registry.k8s.io/ingress-nginx/kube-webhook-certgen:v20230407@sha256:543c40fd093964bc9ab509d3e791f9989963021f1e9e4c9c7b6700b02bfb227b"
+        imagePullPolicy: IfNotPresent
+        args:
+        - patch
+        - --webhook-name=release-name-ingress-nginx-admission
+        - --namespace=$(POD_NAMESPACE)
+        - --patch-mutating=false
+        - --secret-name=release-name-ingress-nginx-admission
+        - --patch-failure-policy=Fail
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        securityContext:
+          allowPrivilegeEscalation: false
+      restartPolicy: OnFailure
+      serviceAccountName: release-name-ingress-nginx-admission
+      nodeSelector:
+        kubernetes.io/os: linux
+      securityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 2000

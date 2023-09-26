@@ -28,7 +28,7 @@ Via PyPi package available (<https://pypi.org/project/helmYAMLizer>)
 # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 pip install helmYAMLizer
 
-helm template ingress-nginx/ingress-nginx | python3 -m helmYAMLizer --dir 'nginx'
+helm template ingress-nginx/ingress-nginx | python -m helmYAMLizer --dir 'nginx'
 ```
 
 Using distroless image available (`ghcr.io/violetcranberry/helmyamlizer:latest`):
