@@ -8,7 +8,7 @@
 
 Adopting a minimalistic approach to rendering multi-document YAML produced by the `helm template` output into local
 files. In line with GitOps practices, a shallow or non-nested structure for saved YAML is preferred to ensure better
-visibility and clarity.
+visibility and clarity. Requires Python 3.7+
 
 ```text
 ❯ python -m helmYAMLizer --help

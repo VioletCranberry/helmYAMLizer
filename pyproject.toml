@@ -8,6 +8,7 @@ version = "1.0.1"
 authors = [
   { name="VioletCranberry" }
 ]
+requires-python = ">=3.7"
 description = "Minimal local renderer for Helm template YAML"
 readme = "README.md"
 classifiers = [
