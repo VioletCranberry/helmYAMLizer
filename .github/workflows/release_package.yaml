@@ -52,8 +52,8 @@ jobs:
       - name: Upload Release Asset
         run: |
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
-          helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
+          ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
-           helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}.tar.gz
+          ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
