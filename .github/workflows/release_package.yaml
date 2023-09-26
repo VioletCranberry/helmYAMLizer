@@ -1,0 +1,43 @@
+name: Build and publish a new package
+on:
+  release:
+    types:
+      - published
+permissions:
+  contents: write
+jobs:
+  new_image_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup release
+        uses: ./.github/workflows/common-setup.yaml@main
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+      - name: Bump version in pyproject.toml
+        run: |
+          NEW_VERSION=${{ env.LATEST_RELEASE_TAG }}
+          sed -i "" "s/\(version = \"\)[^\"]*\"/\1$NEW_VERSION\"/" pyproject.toml
+      - name: Commit pyproject.toml to repo
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ./pyproject.toml
+          # Check for changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update package version [skip ci]"
+          git push
+      - name: Build package
+        run: python -m build
+      - name: Upload Release Asset
+        run: |
+          gh release upload ${{ env.LATEST_RELEASE_TAG }} \
+          helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
+          gh release upload ${{ env.LATEST_RELEASE_TAG }} \
+           helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -6,3 +6,7 @@ venv/
 pylint_output.log
 coverage_output.log
 .coverage
+# Distribution
+dist/
+helmYAMLizer_VioletCranberry.egg-info/
+__pycache__/

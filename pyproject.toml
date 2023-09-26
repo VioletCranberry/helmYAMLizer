@@ -1,0 +1,24 @@
+[build-system]
+requires = [ "setuptools>=61.0" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "helmYAMLizer_VioletCranberry"
+version = "1.0.0"
+authors = [
+  { name="VioletCranberry" }
+]
+description = "Minimal helm template yaml local renderer"
+readme = "README.md"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apachee License 2.0",
+  "Operating System :: OS Independent",
+]
+dynamic = ["dependencies"]
+
+[project.urls]
+"Homepage" = "https://github.com/VioletCranberry/helmYAMLizer"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}

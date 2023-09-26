@@ -1,14 +1,16 @@
 #  helmYAMLizer
 
-![Pylint Score](./.github/badges/pylint.svg) ![Coverage Score](./.github/badges/coverage.svg)
-![Image](./.github/badges/image.svg) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![Coverage Score](./.github/badges/coverage.svg)
+![Image](./.github/badges/image.svg) 
+![Pylint Score](./.github/badges/pylint.svg)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Adopting a minimalistic approach to rendering multi-document YAML produced by the `helm template` output into local
 files. In line with GitOps practices, a shallow or non-nested structure for saved YAML is preferred to ensure better
 visibility and clarity.
 
 ```text
-❯ ./helmYAMLizer.py --help
+❯ python -m helmYAMLizer --help
 usage: helmYAMLizer.py [-h] -d DIR [--debug]
 
 optional arguments:
@@ -34,13 +36,13 @@ Using pure `bash`:
 
 ```shell
 # helm repo add gloo https://storage.googleapis.com/solo-public-helm && helm repo update
-pip3 install ruamel.yaml
+pip install ruamel.yaml
 helm template --include-crds gloo/gloo | \
-  python3 <(curl -sL https://raw.githubusercontent.com/VioletCranberry/helmYAMLizer/main/helmYAMLizer.py) \
+  python <(curl -sL https://raw.githubusercontent.com/VioletCranberry/helmYAMLizer/main/helmYAMLizer.py) \
   --dir 'gloo'
 ```
 
-Running the script directly:
+Demo:
 
 ![Demo](./examples/demo.gif)
 For additional examples, refer to the `examples` directory.
