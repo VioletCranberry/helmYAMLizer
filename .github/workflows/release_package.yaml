@@ -8,6 +8,9 @@ permissions:
 jobs:
   new_image_build:
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -57,3 +60,5 @@ jobs:
           ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: upload release to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
