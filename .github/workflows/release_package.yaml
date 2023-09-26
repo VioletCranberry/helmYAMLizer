@@ -48,6 +48,7 @@ jobs:
             exit 0
           fi
           git commit -m "Update package version [skip ci]"
+          git pull --rebase
           git push
       - name: Build package
         run: python -m build
