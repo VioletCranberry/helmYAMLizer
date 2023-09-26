@@ -19,3 +19,7 @@ classifiers = [
 
 [project.urls]
 "Homepage" = "https://github.com/VioletCranberry/helmYAMLizer"
+
+dynamic = ["dependencies"]
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
