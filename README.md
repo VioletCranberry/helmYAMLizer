@@ -4,6 +4,7 @@
 ![Image](./.github/badges/image.svg) 
 ![Pylint Score](./.github/badges/pylint.svg)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![PyPi](./.github/badges/static_pypi.svg)
 
 Adopting a minimalistic approach to rendering multi-document YAML produced by the `helm template` output into local
 files. In line with GitOps practices, a shallow or non-nested structure for saved YAML is preferred to ensure better
@@ -20,6 +21,15 @@ optional arguments:
 ```
 
 ### Usage
+
+Via PyPi package available (<https://pypi.org/project/helmYAMLizer>)
+
+```shell
+# helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
+pip install helmYAMLizer
+
+helm template ingress-nginx/ingress-nginx | python3 -m helmYAMLizer --dir 'nginx'
+```
 
 Using distroless image available (`ghcr.io/violetcranberry/helmyamlizer:latest`):
 

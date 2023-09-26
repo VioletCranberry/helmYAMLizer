@@ -8,7 +8,7 @@ version = "1.0.0"
 authors = [
   { name="VioletCranberry" }
 ]
-description = "Minimal helm template yaml local renderer"
+description = "Minimal local renderer for Helm template YAML"
 readme = "README.md"
 classifiers = [
   "Programming Language :: Python :: 3",
