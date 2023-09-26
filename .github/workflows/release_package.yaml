@@ -54,9 +54,9 @@ jobs:
       - name: Upload Release Assets
         run: |
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
-          ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
+          ./dist/helmYAMLizer-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
-          ./dist/helmYAMLizer_VioletCranberry-${{ env.LATEST_RELEASE_TAG }}.tar.gz
+          ./dist/helmYAMLizer-${{ env.LATEST_RELEASE_TAG }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload release to PyPI

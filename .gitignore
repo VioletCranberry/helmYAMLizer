@@ -8,5 +8,5 @@ coverage_output.log
 .coverage
 # Distribution
 dist/
-helmYAMLizer_VioletCranberry.egg-info/
+helmYAMLizer*/
 __pycache__/
