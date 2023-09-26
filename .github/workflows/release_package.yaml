@@ -36,7 +36,7 @@ jobs:
       - name: Bump version in pyproject.toml
         run: |
           NEW_VERSION=${{ env.LATEST_RELEASE_TAG }}
-          sed "s/\(version = \"\)[^\"]*\"/\1$NEW_VERSION\"/" ./pyproject.toml
+          sed -i "s/\(version = \"\)[^\"]*\"/\1$NEW_VERSION\"/" ./pyproject.toml
       - name: Commit pyproject.toml to repo
         run: |
           git config user.name "GitHub Actions Bot"
