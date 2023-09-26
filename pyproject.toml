@@ -15,10 +15,6 @@ classifiers = [
   "License :: OSI Approved :: Apache Software License",
   "Operating System :: OS Independent",
 ]
-dynamic = ["dependencies"]
 
 [project.urls]
 "Homepage" = "https://github.com/VioletCranberry/helmYAMLizer"
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
