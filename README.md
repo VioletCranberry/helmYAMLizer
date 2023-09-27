@@ -22,16 +22,13 @@ optional arguments:
 
 ### Usage
 
-Via PyPi package available (<https://pypi.org/project/helmYAMLizer>)
-
 ```shell
 # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 pip install helmYAMLizer
-
 helm template ingress-nginx/ingress-nginx | python -m helmYAMLizer --dir 'nginx'
 ```
 
-Using distroless image available (`ghcr.io/violetcranberry/helmyamlizer:latest`):
+With docker image:
 
 ```shell
 # helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update
@@ -42,7 +39,7 @@ helm template prometheus-community/kube-prometheus-stack | \
   --dir 'prom-stack'
 ```
 
-Using pure `bash`:
+With shell:
 
 ```shell
 # helm repo add gloo https://storage.googleapis.com/solo-public-helm && helm repo update
