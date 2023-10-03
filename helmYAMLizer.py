@@ -272,7 +272,8 @@ def main() -> None:
             # Prepare document local path.
             file_path = prepare_file_path(target_dir, doc_source_path)
             # Drop metadata label keys from the document.
-            document = drop_label_keys(document, args.drop_label_keys)
+            if args.drop_label_keys:
+                document = drop_label_keys(document, args.drop_label_keys)
             # Save the document to file.
             save_document_to_file(file_path, document)
         else:
