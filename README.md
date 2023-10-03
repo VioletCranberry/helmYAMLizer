@@ -11,13 +11,12 @@ files. In line with GitOps practices, a shallow or non-nested structure for save
 visibility and clarity. Requires Python 3.7+
 
 ```text
-❯ python -m helmYAMLizer --help
-usage: helmYAMLizer.py [-h] -d DIR [--debug]
-
 optional arguments:
-  -h, --help         show this help message and exit
-  -d DIR, --dir DIR  The directory where files will be saved.
-  --debug            Should we run the script in debug mode?
+  -h, --help            show this help message and exit
+  -d DIR, --dir DIR     The directory where files will be saved.
+  --drop-label-keys [DROP_LABEL_KEYS ...]
+                        List of metadata label keys to remove.
+  --debug               Should we run the script in debug mode?
 ```
 
 ### Usage

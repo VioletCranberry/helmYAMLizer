@@ -9,7 +9,7 @@ import logging
 import os
 import sys
 from functools import wraps
-from typing import Callable, Any, Dict, Optional
+from typing import Callable, Any, Dict, List, Union, Optional
 
 from ruamel.yaml import YAML, YAMLError
 
@@ -177,6 +177,50 @@ def prepare_file_path(target_dir: str, flattened_path: str) -> str:
     return local_file_path
 
 
+@handle_exceptions
+def drop_label_keys(
+    data: Union[Dict[str, Any], List[Any], Any], label_keys: List[str]
+) -> Union[Dict[str, Any], List[Any], Any]:
+    """Removes specified label keys from data recursively."""
+    # Validate input for label_keys.
+    if not isinstance(label_keys, list) or not all(
+        isinstance(key, str) for key in label_keys
+    ):
+        raise ValueError("label_keys must be a list of strings.")
+    # Base case for recursion: if data isn't a dictionary or a list, return it as is.
+    if not isinstance(data, (dict, list)):
+        return data
+
+    # Helper function to process dict type data.
+    def process_dict(data_dict: Dict[str, Any], label_keys: List[str]) -> None:
+        if "labels" in data_dict:
+            for label_key in label_keys:
+                data_dict["labels"].pop(label_key, None)
+        for key, val in data_dict.items():
+            if isinstance(val, (dict, list)):
+                data_dict[key] = drop_label_keys(val, label_keys)
+
+    # Helper function to process list type data.
+    def process_list(data_list: List[Any], label_keys: List[str]) -> None:
+        for index, item in enumerate(data_list):
+            if isinstance(item, (dict, list)):
+                data_list[index] = drop_label_keys(item, label_keys)
+            elif not isinstance(
+                item, (str, int, float, bool)
+            ):  # Allow basic types in the list
+                raise ValueError(
+                    f"Unexpected type '{type(item).__name__}'"
+                    f" encountered in the list data."
+                )
+
+    # Process based on the type of data.
+    if isinstance(data, dict):
+        process_dict(data, label_keys)
+    else:  # The previous check ensures data is a list here.
+        process_list(data, label_keys)
+    return data
+
+
 def get_arguments() -> argparse.Namespace:
     """Parses and returns command line arguments."""
     parser = argparse.ArgumentParser()
@@ -186,6 +230,13 @@ def get_arguments() -> argparse.Namespace:
         action="store",
         help="The directory where files will be saved.",
         required=True,
+    )
+    parser.add_argument(
+        "--drop-label-keys",
+        nargs="*",
+        action="store",
+        help="List of metadata label keys to remove.",
+        required=False,
     )
     parser.add_argument(
         "--debug",
@@ -220,6 +271,8 @@ def main() -> None:
             doc_source_path = flatten_source_path(doc_source_path)
             # Prepare document local path.
             file_path = prepare_file_path(target_dir, doc_source_path)
+            # Drop metadata label keys from the document.
+            document = drop_label_keys(document, args.drop_label_keys)
             # Save the document to file.
             save_document_to_file(file_path, document)
         else:
