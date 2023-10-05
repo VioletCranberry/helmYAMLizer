@@ -33,7 +33,7 @@ options:
 ```shell
 # helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 pip install helmYAMLizer
-helm template ingress-nginx/ingress-nginx | python -m helmYAMLizer --dir 'nginx'
+helm template ingress-nginx/ingress-nginx | helmYAMLizer --dir 'nginx'
 ```
 
 With docker image:
