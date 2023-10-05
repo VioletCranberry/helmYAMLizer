@@ -21,5 +21,8 @@ dynamic = ["dependencies"]
 [project.urls]
 "Homepage" = "https://github.com/VioletCranberry/helmYAMLizer"
 
+[project.scripts]
+helmYAMLizer = "helmYAMLizer:main"
+
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
