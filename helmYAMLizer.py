@@ -12,6 +12,7 @@ from functools import wraps
 from typing import Callable, Any, Dict, List, Union, Optional
 
 from ruamel.yaml import YAML, YAMLError
+from ruamel.yaml.comments import CommentedMap
 
 # Initialize new global YAML instance.
 yaml = YAML()
@@ -221,6 +222,67 @@ def drop_label_keys(
     return data
 
 
+@handle_exceptions
+def collect_yaml_files(directory: str) -> List[str]:
+    """Collect all the YAML files in the directory and its subdirectories."""
+    logging.debug("Collecting all the YAML files.")
+    all_yaml_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if is_valid_yaml(file):
+                rel_path = os.path.relpath(os.path.join(root, file), directory)
+                all_yaml_files.append(rel_path)
+    all_yaml_files.sort()
+    logging.debug(f"YAML files collected: {all_yaml_files}")
+    return all_yaml_files
+
+
+@handle_exceptions
+def is_valid_yaml(file: str) -> bool:
+    """Determine if a file is a valid YAML file."""
+    return file.endswith((".yaml", ".yml")) and file not in [
+        "kustomization.yaml",
+        "kustomization.yml",
+    ]
+
+
+@handle_exceptions
+def create_kustom_data(yaml_files: List[str]) -> CommentedMap:
+    """Generate the kustomization data."""
+    logging.debug("Generating YAML data.")
+    kustom_data = CommentedMap()
+    kustom_data["apiVersion"] = "kustomize.config.k8s.io/v1beta1"
+    kustom_data["kind"] = "Kustomization"
+    kustom_data["resources"] = yaml_files
+    kustom_data.yaml_set_comment_before_after_key(
+        "apiVersion", before="This file was auto-generated with helmYAMLizer."
+    )
+    return kustom_data
+
+
+@handle_exceptions
+def save_kustom_data(directory: str, kustom_data: CommentedMap) -> None:
+    """Save the kustomization data to a file."""
+    logging.debug("Storing data to file.")
+    file_path = os.path.join(directory, "kustomization.yaml")
+    with open(file_path, encoding="utf-8", mode="w") as f:
+        yaml.dump(kustom_data, f)
+        logging.info(f"Generated kustomization.yaml file {f.name}")
+
+
+@handle_exceptions
+def generate_kustomize_file(directory: str) -> None:
+    """
+    Generate a single kustomization.yaml file in the root directory that references
+    all the .yaml and .yml files in the directory and its subdirectories.
+    """
+    yaml_files = collect_yaml_files(directory)
+    if not yaml_files:
+        return
+    kustom_data = create_kustom_data(yaml_files)
+    save_kustom_data(directory, kustom_data)
+
+
 def get_arguments() -> argparse.Namespace:
     """Parses and returns command line arguments."""
     parser = argparse.ArgumentParser()
@@ -236,6 +298,13 @@ def get_arguments() -> argparse.Namespace:
         nargs="*",
         action="store",
         help="List of metadata label keys to remove.",
+        required=False,
+    )
+    parser.add_argument(
+        "-k",
+        "--kustomize-generate",
+        action="store_true",
+        help="Should we generate a kustomize file?",
         required=False,
     )
     parser.add_argument(
@@ -280,6 +349,9 @@ def main() -> None:
             logging.warning(
                 "Document [#%s] has no recognizable source." " Skipping.", index
             )
+    # Generate a single kustomization.yaml file.
+    if args.kustomize_generate:
+        generate_kustomize_file(target_dir)
 
 
 if __name__ == "__main__":

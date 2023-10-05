@@ -8,14 +8,23 @@
 
 Adopting a minimalistic approach to rendering multi-document YAML produced by the `helm template` output into local
 files. In line with GitOps practices, a shallow or non-nested structure for saved YAML is preferred to ensure better
-visibility and clarity. Requires Python 3.7+
+visibility and clarity. 
+
+Users can choose to leave out certain labels from the generated YAML. For instance, they might decide not to include
+the `app.kubernetes.io/managed-by: Helm` label. They also have the ability to generate a `kustomization.yaml` file, 
+which will list all the processed HELM chart YAML files as resources.
 
 ```text
-optional arguments:
+./helmYAMLizer.py --help
+usage: helmYAMLizer.py [-h] -d DIR [--drop-label-keys [DROP_LABEL_KEYS ...]] [-k] [--debug]
+
+options:
   -h, --help            show this help message and exit
   -d DIR, --dir DIR     The directory where files will be saved.
   --drop-label-keys [DROP_LABEL_KEYS ...]
                         List of metadata label keys to remove.
+  -k, --kustomize-generate
+                        Should we generate a kustomize file?
   --debug               Should we run the script in debug mode?
 ```
 
