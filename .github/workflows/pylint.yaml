@@ -10,7 +10,7 @@ on:
       - master
       - main
     paths:
-      - '**.py'
+      - '**/*.py'
 permissions:
   contents: read
 jobs:
