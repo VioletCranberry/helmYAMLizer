@@ -17,7 +17,7 @@
         <text x="46.0" y="14">ghcr.io image</text>
     </g>
     <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
-        <text x="229.5" y="15" fill="#010101" fill-opacity=".3">ghcr.io/violetcranberry/helmyamlizer:1.0.6</text>
-        <text x="228.5" y="14">ghcr.io/violetcranberry/helmyamlizer:1.0.6</text>
+        <text x="229.5" y="15" fill="#010101" fill-opacity=".3">ghcr.io/violetcranberry/helmyamlizer:1.0.7</text>
+        <text x="228.5" y="14">ghcr.io/violetcranberry/helmyamlizer:1.0.7</text>
     </g>
 </svg>
