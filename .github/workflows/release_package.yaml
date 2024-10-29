@@ -57,7 +57,7 @@ jobs:
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
           ./dist/helmYAMLizer-${{ env.LATEST_RELEASE_TAG }}-py3-none-any.whl
           gh release upload ${{ env.LATEST_RELEASE_TAG }} \
-          ./dist/helmYAMLizer-${{ env.LATEST_RELEASE_TAG }}.tar.gz
+          ./dist/helmyamlizer-${{ env.LATEST_RELEASE_TAG }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: upload release to PyPI
